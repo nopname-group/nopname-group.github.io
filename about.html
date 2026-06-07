@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About // NOPNAME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;700&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0a0b; --bg-surface:#111114; --bg-card:#141418;
+      --border:#1e1e26; --border-hi:#2e2e3a;
+      --text:#c8c8d4; --text-dim:#60606e; --text-hi:#e8e8f0;
+      --accent:#c0392b; --accent-dim:#7d1e14;
+      --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.7;min-height:100vh;}
+    .scanline{pointer-events:none;position:fixed;inset:0;z-index:9999;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 4px);}
+    header{position:sticky;top:0;z-index:100;background:rgba(10,10,11,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+    .header-inner{max-width:900px;margin:0 auto;padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;}
+    .logo-block{display:flex;align-items:center;gap:0.4rem;font-family:var(--mono);font-size:0.95rem;}
+    .logo-bracket{color:var(--accent);font-weight:700;} .logo-name{color:var(--text-hi);font-weight:700;letter-spacing:0.12em;}
+    .logo-tag{color:var(--text-dim);font-size:0.7rem;margin-left:0.5rem;}
+    nav{display:flex;gap:0.25rem;}
+    .nav-link{font-family:var(--mono);font-size:0.78rem;color:var(--text-dim);text-decoration:none;padding:0.3rem 0.7rem;border-radius:2px;letter-spacing:0.06em;transition:color 0.15s,background 0.15s;}
+    .nav-link:hover{color:var(--text-hi);background:var(--bg-surface);}
+    .nav-link.active{color:var(--accent);background:var(--bg-surface);}
+    main{max-width:900px;margin:0 auto;padding:0 2rem 5rem;}
+    .about-body{max-width:640px;padding:4rem 0 3rem;}
+    h1{font-family:var(--mono);font-size:clamp(1.4rem,3vw,2rem);font-weight:700;color:var(--text-hi);margin-bottom:2.5rem;}
+    h2{font-family:var(--mono);font-size:0.72rem;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin:2.5rem 0 0.75rem;padding-left:0.75rem;border-left:2px solid var(--accent);}
+    p{font-size:0.91rem;color:var(--text);line-height:1.85;margin-bottom:1rem;}
+    .member{display:flex;align-items:baseline;gap:0.75rem;padding:0.6rem 0;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:0.83rem;}
+    .member-handle{color:var(--text-hi);}
+    .member-role{color:var(--text-dim);font-size:0.75rem;}
+    .disclaimer{background:rgba(192,57,43,0.07);border:1px solid rgba(192,57,43,0.2);border-radius:3px;padding:1rem 1.2rem;margin-top:2.5rem;font-family:var(--mono);font-size:0.78rem;color:#e87060;line-height:1.65;}
+    footer{border-top:1px solid var(--border);margin-top:4rem;padding:1.75rem 2rem;}
+    .footer-inner{max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem;font-family:var(--mono);font-size:0.7rem;color:var(--text-dim);}
+    .footer-logo{color:var(--accent);font-weight:700;}
+    ::selection{background:var(--accent-dim);color:var(--text-hi);}
+    ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:var(--bg);} ::-webkit-scrollbar-thumb{background:var(--border-hi);}
+  </style>
+</head>
+<body>
+  <div class="scanline"></div>
+  <header>
+    <div class="header-inner">
+      <div class="logo-block">
+        <span class="logo-bracket">[</span><span class="logo-name">NOPNAME</span><span class="logo-bracket">]</span>
+        <span class="logo-tag">// security research</span>
+      </div>
+      <nav>
+        <a href="../index.html" class="nav-link">home</a>
+        <a href="about.html" class="nav-link active">about</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="about-body">
+      <h1>// about</h1>
+
+      <h2>who we are</h2>
+      <p>NOPNAME is an informal collective of independent security researchers based in the Dominican Republic. We share a common interest in malware analysis, reverse engineering, and offensive/defensive security research.</p>
+      <p>This site is our public outlet for technical writeups and research notes. Nothing here is affiliated with any employer or institution.</p>
+
+      <h2>members</h2>
+      <div class="member">
+        <span class="member-handle">researcher_01</span>
+        <span class="member-role">malware analysis · reverse engineering · threat hunting</span>
+      </div>
+      <!-- Add more members: copy the div above -->
+
+      <h2>what we publish</h2>
+      <p>Malware analysis reports with full methodology, static + dynamic findings, IOCs, and detection artifacts. General research on techniques, tools, and the threat landscape.</p>
+
+      <h2>contact</h2>
+      <p>For responsible disclosure or questions, open an issue on our <a href="https://github.com/Jorge-Felix/nopname.github.io" style="color:var(--accent)">GitHub repository</a>. We do not have a public email.</p>
+
+      <div class="disclaimer">
+        ⚠ All content published here is for educational and research purposes only.
+        We do not condone or facilitate any illegal activity. Samples referenced in our
+        analysis are handled in isolated environments and are never distributed.
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-logo">[NOPNAME]</span>
+      <span>all content for educational purposes only</span>
+    </div>
+  </footer>
+</body>
+</html>
