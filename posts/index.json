@@ -1,0 +1,10 @@
+[
+  {
+    "slug": "agentTesla-jun2024",
+    "title": "AgentTesla Variant — Static & Dynamic Analysis",
+    "date": "2024-06-01",
+    "category": "malware",
+    "tags": ["stealer", ".NET", "C2", "YARA"],
+    "excerpt": "Full teardown of a recent AgentTesla sample: unpacking, string decryption, C2 extraction, and YARA rule generation."
+  }
+]
