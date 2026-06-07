@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NOPNAME // Security Research</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;700&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:         #0a0a0b;
+      --bg-surface: #111114;
+      --bg-card:    #141418;
+      --border:     #1e1e26;
+      --border-hi:  #2e2e3a;
+      --text:       #c8c8d4;
+      --text-dim:   #60606e;
+      --text-hi:    #e8e8f0;
+      --accent:     #c0392b;
+      --accent-dim: #7d1e14;
+      --mono:       'IBM Plex Mono', monospace;
+      --sans:       'IBM Plex Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+    .scanline {
+      pointer-events: none;
+      position: fixed; inset: 0; z-index: 9999;
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
+    }
+
+    /* HEADER */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,11,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 2rem;
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo-block { display: flex; align-items: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.95rem; }
+    .logo-bracket { color: var(--accent); font-weight: 700; }
+    .logo-name    { color: var(--text-hi); font-weight: 700; letter-spacing: 0.12em; }
+    .logo-tag     { color: var(--text-dim); font-size: 0.7rem; margin-left: 0.5rem; }
+    nav { display: flex; gap: 0.25rem; }
+    .nav-link {
+      font-family: var(--mono); font-size: 0.78rem; color: var(--text-dim);
+      text-decoration: none; padding: 0.3rem 0.7rem; border-radius: 2px;
+      letter-spacing: 0.06em; transition: color 0.15s, background 0.15s;
+    }
+    .nav-link:hover { color: var(--text-hi); background: var(--bg-surface); }
+    .nav-link.active { color: var(--accent); background: var(--bg-surface); }
+
+    /* MAIN */
+    main { max-width: 900px; margin: 0 auto; padding: 0 2rem 5rem; }
+
+    /* HERO */
+    .hero { padding: 4.5rem 0 2.5rem; border-bottom: 1px solid var(--border); margin-bottom: 3rem; }
+    .hero-meta { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.15em; margin-bottom: 1.25rem; }
+    .hero-title { font-family: var(--mono); font-size: clamp(1.8rem, 4.5vw, 3rem); font-weight: 700; color: var(--text-hi); line-height: 1.15; margin-bottom: 1rem; }
+    .hero-title .accent { color: var(--accent); }
+    .hero-sub { color: var(--text-dim); font-size: 0.9rem; line-height: 1.8; max-width: 520px; }
+    .hero-bar { margin-top: 2.5rem; height: 1px; width: 100px; background: linear-gradient(to right, var(--accent-dim), transparent); }
+
+    /* FILTER BAR */
+    .filter-bar { display: flex; gap: 0.4rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .filter-btn {
+      font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim);
+      border: 1px solid var(--border-hi); background: none;
+      padding: 0.3rem 0.8rem; border-radius: 2px; cursor: pointer;
+      letter-spacing: 0.08em; transition: all 0.15s;
+    }
+    .filter-btn:hover { color: var(--text-hi); border-color: var(--text-dim); }
+    .filter-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(192,57,43,0.08); }
+
+    /* POST LIST */
+    .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; }
+    .section-label { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.15em; }
+    #post-count { color: var(--text-dim); font-family: var(--mono); font-size: 0.7rem; }
+
+    .post-list { display: flex; flex-direction: column; }
+
+    .post-card {
+      padding: 1.6rem 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      transition: background 0.15s;
+      animation: fadeIn 0.3s ease both;
+    }
+    .post-card::before {
+      content: ''; position: absolute; left: -2rem; top: 0; bottom: 0;
+      width: 2px; background: transparent; transition: background 0.2s;
+    }
+    .post-card:hover::before { background: var(--accent); }
+    .post-card:hover { background: rgba(255,255,255,0.01); }
+
+    .post-meta { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+    .post-date { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); }
+    .post-category {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em;
+      padding: 0.12rem 0.45rem; border-radius: 2px; text-transform: uppercase; font-weight: 500;
+    }
+    .cat-malware  { background: rgba(192,57,43,0.15); color: #e87060; border: 1px solid rgba(192,57,43,0.3); }
+    .cat-research { background: rgba(46,204,113,0.10); color: #5dbd80; border: 1px solid rgba(46,204,113,0.25); }
+
+    .post-title { font-family: var(--mono); font-size: 1rem; font-weight: 500; line-height: 1.4; margin-bottom: 0.5rem; }
+    .post-title a { color: var(--text-hi); text-decoration: none; transition: color 0.15s; }
+    .post-title a:hover { color: var(--accent); }
+    .post-excerpt { font-size: 0.87rem; color: var(--text-dim); line-height: 1.75; max-width: 640px; margin-bottom: 0.75rem; }
+    .post-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .tag {
+      font-family: var(--mono); font-size: 0.62rem; color: var(--text-dim);
+      border: 1px solid var(--border-hi); padding: 0.08rem 0.4rem; border-radius: 2px;
+    }
+
+    /* EMPTY STATE */
+    .empty-state { padding: 3rem 0; font-family: var(--mono); font-size: 0.85rem; color: var(--text-dim); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); margin-top: 4rem; padding: 1.75rem 2rem; }
+    .footer-inner {
+      max-width: 900px; margin: 0 auto; display: flex; flex-wrap: wrap;
+      align-items: center; gap: 1.5rem; font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim);
+    }
+    .footer-logo { color: var(--accent); font-weight: 700; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    ::selection { background: var(--accent-dim); color: var(--text-hi); }
+    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: var(--border-hi); }
+  </style>
+</head>
+<body>
+  <div class="scanline"></div>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo-block">
+        <span class="logo-bracket">[</span><span class="logo-name">NOPNAME</span><span class="logo-bracket">]</span>
+        <span class="logo-tag">// security research</span>
+      </div>
+      <nav>
+        <a href="index.html" class="nav-link active">home</a>
+        <a href="about.html" class="nav-link">about</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-meta">SECURITY RESEARCH COLLECTIVE &nbsp;·&nbsp; DOMINICAN REPUBLIC</div>
+      <h1 class="hero-title">We dissect <span class="accent">malware</span><br>so you don't have to.</h1>
+      <p class="hero-sub">In-depth malware analysis, threat research, and technical writeups from independent security researchers.</p>
+      <div class="hero-bar"></div>
+    </section>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">all</button>
+      <button class="filter-btn" data-filter="malware">malware</button>
+      <button class="filter-btn" data-filter="research">research</button>
+    </div>
+
+    <div class="section-header">
+      <span class="section-label">// posts</span>
+      <span id="post-count"></span>
+    </div>
+
+    <div class="post-list" id="post-list">
+      <div class="empty-state">loading posts...</div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-logo">[NOPNAME]</span>
+      <span>all content for educational purposes only</span>
+    </div>
+  </footer>
+
+  <script>
+    let allPosts = [];
+    let activeFilter = 'all';
+
+    async function loadPosts() {
+      try {
+        const res = await fetch('posts/index.json?_=' + Date.now());
+        allPosts = await res.json();
+        // Sort newest first
+        allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        renderPosts();
+      } catch(e) {
+        document.getElementById('post-list').innerHTML =
+          '<div class="empty-state">// no posts yet</div>';
+      }
+    }
+
+    function renderPosts() {
+      const list = document.getElementById('post-list');
+      const count = document.getElementById('post-count');
+
+      const filtered = activeFilter === 'all'
+        ? allPosts
+        : allPosts.filter(p => p.category === activeFilter);
+
+      count.textContent = filtered.length + ' post' + (filtered.length !== 1 ? 's' : '');
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty-state">// no posts in this category yet</div>';
+        return;
+      }
+
+      list.innerHTML = filtered.map((p, i) => `
+        <article class="post-card" style="animation-delay:${i * 0.05}s">
+          <div class="post-meta">
+            <span class="post-date">${p.date}</span>
+            <span class="post-category cat-${p.category}">${p.category}</span>
+          </div>
+          <h2 class="post-title">
+            <a href="posts/${p.slug}.html">${p.title}</a>
+          </h2>
+          <p class="post-excerpt">${p.excerpt}</p>
+          <div class="post-tags">
+            ${(p.tags || []).map(t => `<span class="tag">${t}</span>`).join('')}
+          </div>
+        </article>
+      `).join('');
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        renderPosts();
+      });
+    });
+
+    loadPosts();
+  </script>
+</body>
+</html>
